@@ -1,0 +1,23 @@
+# Core LLM Libraries
+langchain
+llama-index
+haystack
+langchain-groq
+
+# Local Embedding Support
+sentence-transformers
+
+# FastAPI Backend
+fastapi
+uvicorn
+
+# Env and HTTP utils
+requests
+python-dotenv
+
+# Input validation
+pydantic
+
+# Experimental AI Agents (Optional / Advanced Use)
+autogpt
+babyagi
