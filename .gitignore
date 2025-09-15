@@ -1,0 +1,68 @@
+# ========================
+# Environment & Secrets
+# ========================
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+secrets/
+
+# ========================
+# Node.js
+# ========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store
+.next/
+out/
+dist/
+build/
+
+# ========================
+# Python
+# ========================
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+.eggs/
+.Python
+.env/
+venv/
+ENV/
+env/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ========================
+# IDE / Editor
+# ========================
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db
+
+# ========================
+# Logs & Misc
+# ========================
+*.log
+*.tmp
+*.bak
+*.pid
+*.seed
+*.cover
+coverage/
+.cache/
+.mypy_cache/
+.pytest_cache/

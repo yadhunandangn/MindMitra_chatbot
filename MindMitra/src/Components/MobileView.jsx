@@ -1,77 +1,135 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { getDashboardLink } from "../utils/roleUtils";
+import {
+  Home,
+  BookOpen,
+  MessageCircle,
+  Info,
+  LogIn,
+  LogOut,
+  LayoutDashboard,
+  X,
+} from "lucide-react";
 
 export const MobileMenu = ({ menuOpen, setMenuOpen }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [role, setRole] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if user is logged in by verifying JWT in localStorage
     const token = localStorage.getItem("authToken");
     setIsLoggedIn(!!token);
-  }, [menuOpen]); // Re-check whenever menu opens
+    setRole(localStorage.getItem("role") || "");
+  }, [menuOpen]);
+
+  // Close menu on ESC key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [setMenuOpen]);
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userId");
+    localStorage.removeItem("username");
+    localStorage.removeItem("role");
     setIsLoggedIn(false);
     setMenuOpen(false);
     navigate("/login");
   };
 
   const menuLinks = [
-    { label: "Home", to: "/" },
-    { label: "Blog", to: "/blog" },
-    { label: "Chat With Your Mitra", to: "/chat" },
-    { label: "About Us", to: "/about" },
+    { label: "Home", to: "/", icon: <Home className="w-5 h-5" /> },
+    { label: "Wellness Hub", to: "/wellness", icon: <BookOpen className="w-5 h-5" /> },
+    { label: "Chat", to: "/chat", icon: <MessageCircle className="w-5 h-5" /> },
+    { label: "About Us", to: "/about", icon: <Info className="w-5 h-5" /> },
   ];
+
+  // ✅ Safe dashboard link
+  const dashboardLink = role ? getDashboardLink(role) : null;
+  if (isLoggedIn && dashboardLink) {
+    menuLinks.push({
+      label: "Dashboard",
+      to: dashboardLink,
+      icon: <LayoutDashboard className="w-5 h-5" />,
+    });
+  }
 
   return (
     <div
-      className={`fixed top-0 left-0 w-full bg-[rgba(255,255,255,0.95)] z-40 flex flex-col items-center
-                  transition-all duration-300 ease-in-out justify-center
-                  ${menuOpen ? "h-screen opacity-100 pointer-events-auto" : "h-0 opacity-0 pointer-events-none"}`}
+      className={`fixed inset-0 z-40 flex flex-col items-center justify-center
+                  bg-gradient-to-br from-white/90 to-gray-100/80 backdrop-blur-2xl
+                  transform transition-all duration-500 ease-in-out
+                  ${menuOpen ? "translate-x-0 opacity-100" : "translate-x-full opacity-0 pointer-events-none"}`}
+      onClick={() => setMenuOpen(false)} // close if background clicked
     >
-      {/* Close Button */}
-      <button
-        onClick={() => setMenuOpen(false)}
-        className="absolute top-6 right-6 text-black text-3xl z-50"
+      {/* Prevent background click from closing menu when clicking inside */}
+      <div
+        className="relative w-full h-full flex flex-col items-center justify-center"
+        onClick={(e) => e.stopPropagation()}
       >
-        &#10006;
-      </button>
-
-      {/* Menu Links */}
-      {menuLinks.map((link, index) => (
-        <Link
-          key={index}
-          to={link.to}
-          className={`text-2xl underline font-semibold text-black my-4 transform transition-transform duration-300
-                      ${menuOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"}`}
-          onClick={() => setMenuOpen(false)}
-        >
-          {link.label}
-        </Link>
-      ))}
-
-      {/* Login / Logout Button */}
-      {isLoggedIn ? (
+        {/* Close Button */}
         <button
-          onClick={handleLogout}
-          className={`text-2xl font-semibold text-red-600 underline my-4 transform transition-transform duration-300
-                      ${menuOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"}`}
-        >
-          Logout
-        </button>
-      ) : (
-        <Link
-          to="/login"
-          className={`text-2xl underline font-semibold text-blue-600 my-4 transform transition-transform duration-300
-                      ${menuOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"}`}
           onClick={() => setMenuOpen(false)}
+          className="absolute top-6 right-6 text-gray-800 hover:text-red-600 transition transform hover:rotate-90"
         >
-          Login
-        </Link>
-      )}
+          <X className="w-8 h-8" />
+        </button>
+
+        {/* Menu Links */}
+        <ul className="flex flex-col items-center space-y-8">
+          {menuLinks.map((link, idx) => (
+            <li
+              key={idx}
+              className="opacity-0 animate-fadeInUp"
+              style={{ animationDelay: `${idx * 120}ms`, animationFillMode: "forwards" }}
+            >
+              <Link
+                to={link.to}
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center gap-3 text-2xl font-semibold text-gray-800 hover:text-green-600 transition transform hover:scale-110"
+              >
+                {link.icon}
+                {link.label}
+              </Link>
+            </li>
+          ))}
+
+          {/* Login / Logout */}
+          {isLoggedIn ? (
+            <li
+              className="opacity-0 animate-fadeInUp"
+              style={{ animationDelay: `${menuLinks.length * 120}ms`, animationFillMode: "forwards" }}
+            >
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-3 bg-gradient-to-r from-red-500 to-red-600 px-6 py-3 rounded-xl font-semibold text-white shadow-md hover:scale-105 transition"
+              >
+                <LogOut className="w-5 h-5" />
+                Logout
+              </button>
+            </li>
+          ) : (
+            <li
+              className="opacity-0 animate-fadeInUp"
+              style={{ animationDelay: `${menuLinks.length * 120}ms`, animationFillMode: "forwards" }}
+            >
+              <Link
+                to="/login"
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center gap-3 bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-3 rounded-xl font-semibold text-white shadow-md hover:scale-105 transition"
+              >
+                <LogIn className="w-5 h-5" />
+                Login
+              </Link>
+            </li>
+          )}
+        </ul>
+      </div>
     </div>
   );
 };

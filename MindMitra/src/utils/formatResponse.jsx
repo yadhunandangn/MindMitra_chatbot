@@ -28,8 +28,15 @@ function parseInlineMarkdown(text) {
   return final;
 }
 
+export const formatDoctors = (doctors) => {
+  return doctors.map((doc) => ({
+    label: `${doc.name} (${doc.specialization})`,
+    value: doc.id,
+  }));
+};
+
 export function formatAIResponse(response) {
-  const lines = response.split("\n").filter(line => line.trim() !== "");
+  const lines = response.split("\n").filter((line) => line.trim() !== "");
   const elements = [];
 
   let listItems = [];
@@ -45,7 +52,11 @@ export function formatAIResponse(response) {
       );
     } else {
       if (listItems.length) {
-        elements.push(<ul key={`ul-${index}`} className="mb-2">{listItems}</ul>);
+        elements.push(
+          <ul key={`ul-${index}`} className="mb-2">
+            {listItems}
+          </ul>
+        );
         listItems = [];
       }
 
@@ -57,7 +68,9 @@ export function formatAIResponse(response) {
         );
       } else {
         elements.push(
-          <p key={index} className="mt-2 text-gray-700">{content}</p>
+          <p key={index} className="mt-2 text-gray-700">
+            {content}
+          </p>
         );
       }
     }

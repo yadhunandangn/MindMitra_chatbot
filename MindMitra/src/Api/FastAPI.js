@@ -1,7 +1,8 @@
-import axios from "axios";
+import axios from 'axios';
 
-const instance = axios.create({
-  baseURL: "http://localhost:8000", // 🔁 Your FastAPI backend URL
+// Axios instance for the FastAPI backend (Chat)
+const fastApi = axios.create({
+  baseURL: "http://localhost:8000",
 });
 
-export default instance;
+export default fastApi;
